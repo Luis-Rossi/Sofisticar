@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %} {{ super() }} - Index{% endblock %}
+<!-- O super() pega o titulo da base e acrescenta a info que vier ao lado -->
+
+{% block content %}
+
+
+    {% if current_user.is_authenticated %}
+    <main class="container">
+        <div class="py-5 text-center">
+            <h2>Olá {{current_user.name}}, o que temos para hoje?</h2>
+            <p class="lead">Veja os agendamentos do dia de hoje ({{data_hoje.day}}/{{data_hoje.month}}/{{data_hoje.year}}) na tabela abaixo.</p>
+        </div>
+        
+        <div class="col-12">
+            <table class="table ms-3">
+                <thead>
+                    <tr>
+                        <th>Número</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                        <th>Nome Cliente</th>
+                        <th>Placa Veículo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>  
+                </tbody>
+            </table>
+        </div>
+            
+    </main>
+
+    {% else %}
+        <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+
+    {% endif %}
+
+
+
+{% endblock %}

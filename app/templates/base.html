@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    {% block head %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <title>{% block title %}Sofisticar Estética Automotiva{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename="img/favicon.png") }}">
+
+    <!-- Import files from static folder -->
+    <!--
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.2/examples/jumbotron/">
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css") }}">    -->
+    
+    <!-- Import using CDN link from Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">  
+    {% endblock %}
+  </head>
+
+  <body>
+    {% block menu_superior %}
+    <div class="container">
+      <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+        <a href="/" class="d-flex align-items-center col-md-3 mb-2 mb-md-0 text-dark text-decoration-none">
+          <img src={{ url_for('static', filename="img/logo.png") }} alt="Sofisticar Logo" width="223" height="32">
+        </a>
+  
+        <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle link-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Empresa
+            </a>
+            <ul class="dropdown-menu">
+              <li class="fs-6 fw-bold ms-3">Funcionários</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo funcionário</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar funcionário</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li class="fs-6 fw-bold ms-3">Serviços</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo serviço</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar serviço</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li class="fs-6 fw-bold ms-3">Produtos</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo produto</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar produto</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle link-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Clientes e Veículos
+            </a>
+            <ul class="dropdown-menu">
+              <li class="fs-6 fw-bold ms-3">Clientes</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo cliente</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar cliente</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li class="fs-6 fw-bold ms-3">Veículos</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo veículo</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar veículo</a></li>
+            </ul>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle link-dark" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Orçamentos / O.S.
+            </a>
+            <ul class="dropdown-menu">
+              <li class="fs-6 fw-bold ms-3">Orçamentos</li>
+              <li><a class="dropdown-item" href="#">Cadastrar novo orçamento</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar orçamento</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li class="fs-6 fw-bold ms-3">Ordens de Serviço</li>
+              <li><a class="dropdown-item" href="#">Cadastrar nova O.S.</a></li>
+              <li><a class="dropdown-item" href="#">Consultar/alterar O.S.</a></li>
+            </ul>
+          </li>
+
+          <li><a class="btn btn-outline-dark" href="#">Agenda</a></li>
+        </ul>
+  
+        <div class="col-md-3 text-end dropdown">
+          {% if current_user.is_authenticated %}
+            <div class="dropdown">
+              <a class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Olá, <strong>{{current_user.name}}</strong>!
+              </a>
+              <ul class="dropdown-menu">
+                <li><a href="#" class="dropdown-item">Informações</a></li>
+                <li><a href="{{url_for('logout')}}" class="dropdown-item">Logout</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a href="#" class="dropdown-item">Cadastrar</a></li>                
+              </ul>
+            </div>
+          {% else %}
+            <div class="dropdown">
+              <a href="{{url_for('login')}}" class="btn btn-outline-success">Login</a>
+            </div>
+          {% endif %}
+        </div>
+      </header>
+    </div>
+    {% endblock %}
+
+    <!--
+    <header class="col-2 ps-4 p-3 border-end">
+
+      <a href="/" class="d-flex align-items-center pb-3 mb-3 border-bottom">
+        <img src={{ url_for('static', filename="img/logo.png") }} alt="Sofisticar Logo" width="223" height="32">
+      </a>
+
+      <ul class="list-unstyled ps-0">
+        <li class="mb-1 ms-2">
+          <a href="/" class="link-dark d-inline-flex text-decoration-none rounded">
+            <h5><strong>Home</strong></h5>
+          </a>
+        </li>
+
+        <li class="border-top my-3"></li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#cliente-collapse" aria-expanded="true">
+            <h5><strong>Clientes</strong></h5>
+          </button>
+
+          <div class="collapse" id="cliente-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Cliente</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Clientes</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Cliente Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#veiculo-collapse" aria-expanded="true">
+            <h5><strong>Veículos</strong></h5>
+          </button>
+
+          <div class="collapse" id="veiculo-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Veículo</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Veículos</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Veículo Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#orcamento-collapse" aria-expanded="true">
+            <h5><strong>Orçamentos</strong></h5>
+          </button>
+
+          <div class="collapse" id="orcamento-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Orçamento</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Orçamento</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Orçamento Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#agendamento-collapse" aria-expanded="true">
+            <h5><strong>Agendamentos</strong></h5>
+          </button>
+
+          <div class="collapse" id="agendamento-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Agendamento</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Agendamentos</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Agendamento Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#os-collapse" aria-expanded="true">
+            <h5><strong>Ordem de Serviço</strong></h5>
+          </button>
+
+          <div class="collapse" id="os-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Nova O.S.</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar O.S.</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar O.S. Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="border-top my-3"></li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#funcionario-collapse" aria-expanded="true">
+            <h5><strong>Funcionários</strong></h5>
+          </button>
+
+          <div class="collapse" id="funcionario-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Funcionário</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Funcionário</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Funcionário Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#produto-collapse" aria-expanded="true">
+            <h5><strong>Produtos</strong></h5>
+          </button>
+
+          <div class="collapse" id="produto-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Produto</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Produto</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Produto Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="mb-1">
+          <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#servico-collapse" aria-expanded="true">
+            <h5><strong>Serviços</strong></h5>
+          </button>
+
+          <div class="collapse" id="servico-collapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal ms-4 pb-1">
+              <li><a href="/teste" class="link-dark d-inline-flex text-decoration-none rounded">Cadastrar Novo Serviço</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Consultar Serviço</a></li>
+              <li><a href="#" class="link-dark d-inline-flex text-decoration-none rounded">Alterar Serviço Existente</a></li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="border-top my-3"></li>
+
+        <li class="mb-1">
+**          {% if current_user.is_authenticated %}
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
+ **             <h5><strong>Olá, {{current_user.name}}</strong></h5>
+            </button>
+
+            <div class="collapse" id="account-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-4">
+                <li>
+**                  <a href="{{url_for('logout')}}" class="link-dark d-inline-flex text-decoration-none rounded">
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+**          {% else %}
+            <button class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#account-collapse" aria-expanded="true">
+              <h5><strong>Acessar</strong></h5>
+            </button>
+
+            <div class="collapse" id="account-collapse">
+              <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 ms-4">
+                <li>
+**                  <a href="{{url_for('login')}}" class="link-dark d-inline-flex text-decoration-none rounded">
+                    Login
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="link-dark d-inline-flex text-decoration-none rounded">
+                    Cadastrar
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+          {% endif %}
+
+    </header>
+    -->
+
+    {% block content %}
+    {% endblock %}
+
+    <!-- Import of Bootstrap JS and JQuery
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename="js/bootstrap.min.js") }}"></script>   -->
+
+    <!-- Import using CDN link from Bootstrap -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4" crossorigin="anonymous"></script>    
+
+  </body>
+</html>

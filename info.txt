@@ -1,0 +1,82 @@
+ORGANIZAÇÃO DO PROJETO
+
+** PARA RODAR O CÓDIGO, PRIMEIRO RODAR A VENV COM O COMANDO .\venv\Scripts\activate **
+** EM SEGUIDA USAR O COMANDO python .\run.py runserver **
+
+- MODEL É A PARTE DE BANCO DE DADOS, INFORMAÇÕES DA APLICAÇÃO
+- VIEW É A PARTE DE VISUALIZAÇÃO, O QUE O USER VÊ (HTML, ARQUIVOS ESTÁTICOS)
+- CONTROLLER É A PARTE LÓGICA, ONDE FICA AS PÁGINAS, CRUD DA APLICAÇÃO
+- ESSE PADRÃO É CONHECIDO COMO MODELO MVC
+
+- PASTA APP É A PASTA PRINCIPAL DA APLICAÇÃO
+- A PASTA STATIC E A TEMPLATES SE TRATAM DA VIEW DO MVC, MAS TEMPLATE JÁ É RECONHECIDO PELO FLASK
+
+- __init__.py É UM ARQUIVO DE QUANDO A GENTE TRABALHA COM MÓDULOS. UM CONJUNTO DE DEFINIÇÕES, DE FUNÇÕES (É O PRINCIPAL)
+- TERÁ __init__.py EM CADA PASTA (CONTROLLER E MODELS) - E ELE SERÁ O HUB DE TUDO NA PASTA
+- OU SEJA, O INIT DA PASTA APP É A CONCENTRAÇÃO DE TODOS OS OUTROS INITS
+
+
+
+SQL ALCHEMY
+
+- É UMA ORM: FERRAMENTA PARA FACILITAR A CRIAÇÃO/COMUNICAÇÃO COM BANCO DE DADOS
+- PEGA O QUE ESTÁ NO CÓDIGO E TRADUZ PARA O BANCO DE DADOS
+- PIP INSTALL FLASK-SQLALCHEMY
+
+
+
+FLASK-MIGRATE
+- É UM MÓDULO PARA MIGRAR O BANCO DE DADOS QUANDO HÁ QUALQUER ALTERAÇÃO (CRUD)
+- PIP INSTALL FLASK-MIGRATE
+
+
+
+FLASK-SCRIPT
+- MUDA A FORMA DE EXECUTAR A NOSSA APLICAÇÃO
+- ADICIONA COMANDOS A ESSA EXECUÇÃO
+- PIP INSTALL FLASK-SCRIPT
+
+PARA MAIS INFORMAÇÕES SOBRE MIGRATE E SCRIPT
+https://www.youtube.com/watch?v=tJZjniFdaIw
+
+COMO O MigrateCommand SE TORNOU OBSOLETO, PRECISA INSTALAR:
+pip install Flask==1.1.4
+pip install Flask-Migrate==2.0.1
+pip install Flask-Script==2.0.6
+
+A FORMA MAIS "MODERNA" É USAR O FLASK CLI (QUE É INTEGRADA), O FLASK-SCRIPT SAIU DE USO POR INCOMPATIBILIDADE COM O NOVO FLASK
+"
+Fala pessoal, notei que algumas pessoas estão com dificuldade em executar o código. Isso se deve pois a partir do Flask 0.11 o 
+Flask inclui uma ferramenta CLI integrada, sendo assim, não é mais necessário a utilização do flask-script. A minha sugestão é 
+que vocês apaguem tudo relacionado a flask-script e usem os comandos nativos sugeridos na página do flask e flask-migrate.  
+No lugar de “python3 run.py runserver” use o comando  “flask run”, 
+Ao invés de “python3 run.py db init” use o comando “flask db init”
+Ao invés de “python3 run.py db migrate”  use o comando “flask db migrate”
+
+e por aí vai.
+"
+
+COMANDOS COM O MigrateCommand:
+PYTHON RUN.PY RUNSERVER --- RODA O ARQUIVO PARA CRIAR O SERVER
+PYTHON RUN.PY DB INIT --- CRIA UMA PASTA MIGRATION (SALVA INFORMAÇÕES DAS MIGRAÇÕES - NÃO MEXER)
+PYTHON RUN.PY DB MIGRATE --- COMEÇA A MIGRAR O BD (CRIA O ARQUIVO DO BD - AINDA SEM AS TABELAS)
+PYTHON RUN.PY DB UPGRADE --- AI SIM ATUALIZA DO BD COM AS TABELAS DO ARQUIVO TABLES.PY
+MIGRATE E UPGRADE TERÃO QUE SER FEITOS SEMPRE QUE TIVER UMA ALTERAÇÃO DE ESTRUTURA NO BD
+
+
+
+QUANDO FOR UTILIZAR BOOTSTRAP:
+- FAZER O DOWNLOAD DO BOOTSTRAP (Compiled CSS and JS)
+- DESZIPAR, DENTRO DA PASTA TERÁ AS PASTAS CSS, FONTS E JS
+- COPIAR E COLAR NA PASTA STATIC (ARQUIVOS DE LAYOUT, ESTILIZAÇÃO, IMAGENS, FONTES, ETC)
+- FAZ AS IMPORTAÇÕES NO HTML SEGUINDO O CAMINHO DAS PASTAS, ASSIM:
+    <link rel="stylesheet" href="{{ url_for('static', filename="css/bootstrap.min.css") }}"> (FAZER ABAIXO DO TITLE - NO HEAD)
+    <script src="{{ url_for('static', filename="js/bootstrap.min.js") }}"></script> (FAZER NO FINAL DO BODY - É MAIS PESADO PRA CARREGAR)
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script> (IMPORTA O JQUERY)
+
+
+
+
+FLASK-WTF
+É USADO PARA TRABALHAR COM FORMS
+PIP INSTALL FLASK-WTF (OU PARA INSTALAR DIRETAMENTE NA VENV, USAR: .\venv\Scripts\pip install Flask-WTF)
