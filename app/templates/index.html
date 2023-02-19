@@ -7,12 +7,20 @@
 
 
     {% if current_user.is_authenticated %}
-    <main class="container">
-        <div class="py-5 text-center">
-            <h2>Olá {{current_user.name}}, o que temos para hoje?</h2>
+    <main class="container text-center">
+        <div class="py-5">
+            <h2>Olá <strong>{{current_user.username}}</strong>, o que temos para hoje?</h2>
             <p class="lead">Veja os agendamentos do dia de hoje ({{data_hoje.day}}/{{data_hoje.month}}/{{data_hoje.year}}) na tabela abaixo.</p>
         </div>
-        
+
+        <div class="col-5 alert alert-white border-dark mt-5 position-absolute top-50 start-50 translate-middle" role="alert">
+            <h4 class="alert-heading">Ah não! Que pena!</h4>
+            <hr>
+            <p>Não temos nenhum agendamento de serviço <br> previsto para hoje no sistema.</p>
+            <a class="btn btn-outline-dark mt-3" href="#">Agendar novo serviço</a>
+        </div>
+
+        <!--
         <div class="col-12">
             <table class="table ms-3">
                 <thead>
@@ -30,7 +38,7 @@
                 </tbody>
             </table>
         </div>
-            
+    -->
     </main>
 
     {% else %}
