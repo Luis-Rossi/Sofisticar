@@ -1,10 +1,10 @@
-from flask import flash, redirect, render_template, url_for
+from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_user, logout_user
 
-from app import app, login_manager
+from app import app, db, login_manager
 from app.controllers.index import index
 from app.models.forms import LoginForm
-from app.models.tables import Usuario
+from app.models.tables import Funcionario, Usuario
 
 
 @login_manager.user_loader
@@ -32,8 +32,3 @@ def logout():
     logout_user()
     flash("Logout realizado com sucesso!")
     return redirect(url_for("index"))
-
-
-@app.route("/criar_conta")
-def criar_conta():
-    return render_template('criar_conta.html')

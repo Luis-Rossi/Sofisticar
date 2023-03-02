@@ -42,28 +42,30 @@
                 <h1 class="h4 mt-3 mb-5 fw-normal">Insira abaixo os dados cadastro de usuário</h1>
             
                 <div class="form-floating">
-                    <input type="email" class="form-control" id="floatingInput" placeholder="usuario@sofisticar.com.br">
+                    <input type="email" class="form-control" id="floatingInput" name="email" placeholder="usuario@sofisticar.com.br">
                     <label for="floatingInput">E-mail</label>
                 </div>
                 
-                <div class="form-floating">
-                    <input type="text" class="form-control mt-2" id="floatingUsername" placeholder="Username">
+                <!--<div class="form-floating">
+                    <input type="text" class="form-control mt-2" id="floatingUsername" name="username" placeholder="Username">
                     <label for="floatingUsername">Username</label>
                 </div>
 
                 <div class="form-floating">
-                    <input type="password" class="form-control mt-2" id="floatingPassword" placeholder="Password">
+                    <input type="password" class="form-control mt-2" id="floatingPassword" name="password" placeholder="Password">
                     <label for="floatingPassword">Password</label>
                 </div>
 
                 {% with messagem = get_flashed_messages() %}
                     {% if messagem %}
                     <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        {{ messagem[0] }}
+                        {{ messagem }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>
                     {% endif %}
-                {% endwith %}
+                {% endwith %}-->
+
+                {{ teste }}
 
                 <div class="row g-3 mt-2">
                     <div class="d-flex">
