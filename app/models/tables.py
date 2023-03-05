@@ -1,3 +1,7 @@
+# QUANDO HOUVER ALTERAÇÃO NA ESTRUTURA DO BD:
+#   - DELETAR O STORAGE.DB E PASTA MIGRATIONS
+#   - RODAR OS COMANDOS python run.py db init || python run.py db migrate || python .\run.py db upgrade
+
 from datetime import datetime
 
 from flask import Flask, flash, redirect, render_template, request, url_for
@@ -9,7 +13,6 @@ from app import db
 ######################################################################
 ##                        USER - LOGIN                              ##
 ######################################################################
-# A classe User é para o cadastro de funcionários, para que acessem o sistema #
 
 
 class Usuario(db.Model):
@@ -61,6 +64,7 @@ class Funcionario(db.Model):
     dataNascimento = db.Column(db.String(10), nullable=False)
     dataContrato = db.Column(db.String(10), nullable=False)
     funcao = db.Column(db.String(150), nullable=False)
+    isActive = db.Column(db.Boolean, default=1, nullable=False)
     #ordemServico = relationship('OrdemServico', backref="funcionarios")
     usuario = relationship('Usuario', backref="funcionarios")
 
@@ -71,6 +75,22 @@ class Funcionario(db.Model):
         self.dataNascimento = dataNascimento
         self.dataContrato = dataContrato
         self.funcao = funcao
+
+    def formata_data_nascimento(funcionario):
+        data_nasc_formatada = datetime.strptime(
+            funcionario.dataNascimento, '%Y-%m-%d')
+        return data_nasc_formatada
+
+    def formata_data_contrato(funcionario):
+        data_contr_formatada = datetime.strptime(
+            funcionario.dataContrato, '%Y-%m-%d')
+        return data_contr_formatada
+
+    def esta_ativo(funcionario):
+        if funcionario.isActive == 1:
+            return "SIM"
+        else:
+            return "NÃO"
 
 
 ######################################################################
