@@ -11,8 +11,8 @@ def load_user(session_token):
     return Usuario.query.filter_by(id=session_token).first()
 
 
-@app.route('/cadastrar_funcionario', methods=['GET', 'POST'])
-def adiciona_funcionario():
+@app.route('/funcionario_cadastrar', methods=['GET', 'POST'])
+def funcionario_cadastrar():
     if request.method == 'POST':
         todos_funcionarios = Funcionario.query.all()
         for func in todos_funcionarios:
@@ -31,13 +31,13 @@ def adiciona_funcionario():
                                   request.form['celular'], request.form['dataNascimento'], request.form['dataContrato'], request.form['funcao'])
         db.session.add(funcionario)
         db.session.commit()
-        mensagem = f'{funcionario.nome.upper()} foi cadastrado(a) com **SUCESSO!**'
+        mensagem = f'O funcionário {funcionario.nome.upper()} foi cadastrado(a) COM SUCESSO!'
         return render_template('funcionario_cadastrar.html', mensagem=mensagem)
     return render_template("funcionario_cadastrar.html")
 
 
 @app.route('/funcionario_resultado', methods=['GET', 'POST'])
-def resultado_funcionario():
+def funcionario_resultado():
     funcionarios = Funcionario.query.all()
     campo = ''
     if request.method == 'POST':
@@ -48,7 +48,7 @@ def resultado_funcionario():
 
 
 @app.route('/funcionario_editar/<int:id>', methods=['GET', 'POST'])
-def edita_funcionario(id):
+def funcionario_editar(id):
     funcionario = Funcionario.query.get(id)
     if request.method == 'POST':
         funcionario.nome = request.form['nome']
@@ -64,6 +64,17 @@ def edita_funcionario(id):
     return render_template('funcionario_editar.html', funcionario=funcionario)
 
 
+@app.route('/funcionario_deletar/<int:id>')
+def funcionario_deletar(id):
+    funcionario = Funcionario.query.get(id)
+    funcionario.isActive = 0
+    db.session.commit()
+    mensagem = f"O funcionário {funcionario.nome} foi DELETADO(A)!"
+    return render_template("funcionario_resultado.html", mensagem_deletar=mensagem)
+
+
+'''
+#   PARA DELETAR DEFINITIVAMENTE O FUNCIONARIO DO BD
 @app.route('/deletar_funcionario2/<int:id>')
 def deleta_funcionario2(id):
     funcionario = Funcionario.query.get(id)
@@ -71,12 +82,4 @@ def deleta_funcionario2(id):
     db.session.commit()
     mensagem = f"O funcionário {funcionario.nome} foi DELETADO(A)!"
     return render_template("funcionario_resultado.html", mensagem_deletar=mensagem)
-
-
-@app.route('/deletar_funcionario/<int:id>')
-def deleta_funcionario(id):
-    funcionario = Funcionario.query.get(id)
-    funcionario.isActive = 0
-    db.session.commit()
-    mensagem = f"O funcionário {funcionario.nome} foi DELETADO(A)!"
-    return render_template("funcionario_resultado.html", mensagem_deletar=mensagem)
+'''

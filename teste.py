@@ -1,6 +1,12 @@
-import hashlib
-import uuid
+from hashlib import blake2b
 
-password = "teste"
-salt = uuid.uuid4().hex
-hashed_password = hashlib.sha512(password + salt).hexdigest()
+psw = blake2b()
+psw.update(b"admin")
+
+psw2 = blake2b()
+psw2.update(b"teste")
+
+print(psw.hexdigest())
+print(psw2.hexdigest())
+print('---')
+print(psw.hexdigest() == psw2.hexdigest())

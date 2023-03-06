@@ -23,6 +23,7 @@ class Usuario(db.Model):
     password = db.Column(db.String)
     email = db.Column(db.String, unique=True)
     funcionario_id = db.Column(db.Integer, db.ForeignKey('funcionarios.id'))
+    isActive = db.Column(db.Boolean, default=1, nullable=False)
 
 # esses property abaixo são necessários para o flask-login #
     @property
@@ -40,14 +41,18 @@ class Usuario(db.Model):
     def get_id(self):
         return str(self.id)
 
-    def __init__(self, username, password, email, funcionario):
+    def __init__(self, username, password, email, funcionario_id):
         self.username = username
         self.password = password
         self.email = email
-        self.funcionario = funcionario
+        self.funcionario_id = funcionario_id
 
     def __repr__(self):  # é uma abreviação de representation (é a saida que terá o print quando puxar a info)
         return "<User %r>" % self.username
+
+    def retorna_nome_funcionario(self, funcionario_id):
+        funcionario = Funcionario.query.get(funcionario_id)
+        return funcionario.nome
 
 
 ######################################################################
@@ -107,9 +112,9 @@ class Veiculo(db.Model):
     cor = db.Column(db.String(150), nullable=False)
     placa = db.Column(db.String(150), nullable=False)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
-    cliente = relationship('Cliente')
-    #orcamentos = relationship(Orcamento, backref="veiculos")
-    #agendamento = relationship(Agendamento, backref='veiculos')
+    cliente = relationship('Cliente', back_populates='veiculo')
+    #orcamentos = relationship(Orcamento, backref="veiculo")
+    #agendamento = relationship(Agendamento, backref='veiculo')
 
     def __init__(self, marca, modelo, cor, placa, cliente):
         self.marca = marca
@@ -131,7 +136,7 @@ class Cliente(db.Model):
     email = db.Column(db.String(150), nullable=False)
     cpf = db.Column(db.String(150), primary_key=True)
     celular = db.Column(db.String(150), nullable=False)
-    veiculos = relationship(Veiculo, backref="clientes")
+    veiculo = relationship(Veiculo, back_populates='cliente')
 
     def __init__(self, nome, email, cpf, celular):
         self.nome = nome

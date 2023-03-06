@@ -2,8 +2,9 @@ from datetime import date
 
 from flask import render_template
 
+import app.controllers.funcionarios
+import app.controllers.usuarios
 from app import app
-from app.controllers.funcionarios import adiciona_funcionario
 
 
 @app.route("/index")

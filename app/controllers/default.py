@@ -1,3 +1,5 @@
+from hashlib import blake2b
+
 from flask import flash, redirect, render_template, request, url_for
 from flask_login import login_user, logout_user
 
@@ -18,7 +20,6 @@ def login():
     if form.validate_on_submit():       # valida se tem todos os campos obrigatórios preenchidos
         # faz um select no bd para ver se encontra um usuário igual ao inserido
         user = Usuario.query.filter_by(username=form.username.data).first()
-        # se o usuário existe E se o password for igual ao inserido
         if user and user.password == form.password.data:
             login_user(user)
             return redirect(url_for("index"))

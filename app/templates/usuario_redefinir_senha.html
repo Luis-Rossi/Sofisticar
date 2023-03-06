@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+{% block content %}
+
+    {% if current_user.is_authenticated %}
+    <main class="container">
+        <div class="py-5 text-center">
+            <h2>Redefinir senha de usuário</h2>
+            <p class="lead">Insira abaixo as novas senhas de <strong>{{ usuario.username.upper() }}</strong> para atualização.</p>
+        </div>
+
+        <div class="row g-5">
+            <div class="col-12">
+                <form action="/usuario_redefinir_senha/{{ usuario.id }}" method="POST">
+                    <h4 class="mb-3">Informações do Usuário</h4>
+                    <div class="row g-3">
+                        <div class="col-sm-12 col-md-4 form-floating">
+                            <input type="text" class="form-control" id="floatingInput" name="nome" placeholder="Nome Completo" value="{{ funcionario.nome }}" disabled>
+                            <label for="floatingInput" class="form-label">Nome Completo</label>
+                        </div>               
+
+                        <div class="col-sm-12 col-md-4 form-floating">
+                            <input type="email" class="form-control" id="floatingInput" name="email" placeholder="E-mail" value="{{ usuario.email }}" disabled>                        
+                            <label for="floatingInput" class="form-label">E-mail</label>
+                        </div>
+
+                        <div class="col-sm-12 col-md-4 form-floating">
+                            <input type="text" class="form-control" id="floatingInput" name="username" placeholder="Username" value="{{ usuario.username }}" disabled>
+                            <label for="floatingInput" class="form-label">Username</label>                        
+                        </div> 
+
+                        <div class="col-sm-12 col-md-6 form-floating">
+                            <input type="password" class="form-control" id="floatingInput" name="novo_password" placeholder="*****" required>
+                            <label for="floatingInput">Novo Password</label>
+                        </div>
+
+                        <div class="col-sm-12 col-md-6 form-floating">
+                            <input type="password" class="form-control" id="floatingInput" name="novo_password_confirma" placeholder="*****" required>
+                            <label for="floatingInput">Repetir Novo Password</label>
+                        </div>
+  
+                    <div class="row g-3 pt-4">
+                        <div class="col-md-12 col-lg-6 p-2">
+                            <a class="w-100 btn btn-outline-secondary btn-lg" href="javascript:history.back()">Voltar para anterior</a>
+                        </div>
+                        <div class="col-md-12 col-lg-6 p-2">
+                            <button type="button" class="w-100 btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modal2{{usuario.id}}">
+                                Alterar senha
+                            </button>
+                            <div class="modal fade" id="modal2{{usuario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Alterar senha?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            Tem certeza que deseja alterar a senha do usuário <strong>{{ usuario.username }}</strong>?
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Não</button>
+                                            <button type="submit" class="btn btn-success">Sim</button></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                </form>
+            </div>
+        </div>   
+    </main>
+
+    {% else %}
+        <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+    {% endif %}
+{% endblock %}

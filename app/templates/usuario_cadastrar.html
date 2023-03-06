@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<main class="container">
+    <div class="py-5 text-center">
+        <h2>Criar conta para usuário</h2>
+        <p class="lead">Insira abaixo as informações do funcionário para criar um acesso para o sistema.</p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-md-12 col-lg-12">
+            <form action="" method="POST">
+                <div class="row g-3">
+                    
+                    <div class="col-sm-12 col-md-4 form-floating">
+                        <select class="form-select" id="floatingSelect" name="email" aria-label="referente ao usuario de email">
+                            {% for email in lista_emails %}
+                                <option value="{{email}}">{{email}}</option>
+                            {% endfor %}
+                        </select>
+                        <label for="floatingSelect">Referente ao usuário de e-mail</label>
+                    </div>
+
+                    <div class="col-sm-12 col-md-4 form-floating">
+                        <input type="text" class="form-control" id="floatingInput" name="username" placeholder="seu_username" required>
+                        <label for="floatingInput">Username<span style="color:red">&nbsp;*</span></label>
+                    </div>
+
+                    <div class="col-sm-12 col-md-4 form-floating">
+                        <input type="password" class="form-control" id="floatingInput" name="password" placeholder="*****" required>
+                        <label for="floatingInput">Password<span style="color:red">&nbsp;*</span></label>
+                    </div>
+                </div>
+
+                <div class="mb-5"> </div> <!-- Espaçamento -->
+
+                <!-- Mensagens de validação -->
+                <div class="col-12 text-center">
+                    {% if mensagem %}
+                    <div class="alert alert-success" role="alert">
+                        {{ mensagem }}
+                    </div>
+                    {% elif mensagem_erro %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ mensagem_erro }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-12 col-lg-6 p-2">
+                        <a class="w-100 btn btn-outline-secondary btn-lg" href="javascript:history.back()">Voltar para anterior</a>
+                    </div>
+                    <div class="col-md-12 col-lg-6 p-2">
+                        <button class="w-100 btn btn-success btn-lg" type="submit">Cadastrar Usuário</button>
+                    </div>
+                </div> 
+
+            </form>
+        </div>
+    </div>
+</main>
+{% else %}
+    <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+{% endif %}
+{% endblock %}
