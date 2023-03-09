@@ -4,22 +4,22 @@
 {% if current_user.is_authenticated %}
 <main class="container">
     <div class="py-5 text-center">
-        <h2>Editar Informação de Serviço</h2>
-        <p class="lead">Insira abaixo as novas informações de <strong>{{ servico.nome.upper() }}</strong> para atualização.</p>
+        <h2>Editar Informação de Produto</h2>
+        <p class="lead">Insira abaixo as novas informações de <strong>{{ produto.nome.upper() }}</strong> para atualização.</p>
     </div>
 
     <div class="row g-5">
         <div class="col-12">
-            <form action="/servico_editar/{{ servico.id }}" method="POST">
-                <h4 class="mb-3">Informações do Serviço</h4>
+            <form action="/produto_editar/{{ produto.id }}" method="POST">
+                <h4 class="mb-3">Informações do Produto</h4>
                 <div class="row g-3">
                     <div class="form-floating col-sm-12 col-md-4">
-                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" value="{{ servico.nome }}">
+                        <input type="text" class="form-control" id="nome" name="nome" placeholder="Nome" value="{{ produto.nome }}">
                         <label for="nome" class="form-label">Nome</label>
                     </div>
 
                     <div class="form-floating col-sm-12 col-md-4">
-                        <input type="float" class="form-control" id="valor" name="valor" placeholder="Preço" value="{{ '%0.2f'|format(servico.valor|float) }}">
+                        <input type="float" class="form-control" id="valor" name="valor" placeholder="Preço" value="{{ '%0.2f'|format(produto.valor|float) }}">
                         <label for="preco" class="form-label">Preço</label>
                     </div>
 
@@ -33,7 +33,7 @@
 
                     <div class="form-floating col-sm-12 col-md-12">
                         <label for="descricao" class="form-label">Descrição</label>
-                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" style="height: 150px" value="{{ servico.descricao }}">
+                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Descrição" style="height: 150px" value="{{ produto.descricao }}">
                     </div>
                 </div>
 
@@ -42,11 +42,11 @@
                         <a class="w-100 btn btn-outline-secondary btn-lg" href="javascript:history.back()">Voltar para anterior</a>
                     </div>
                     <div class="col-md-12 col-lg-6 p-2">
-                        <button type="button" class="w-100 btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modal{{servico.id}}">
+                        <button type="button" class="w-100 btn btn-success btn-lg" data-bs-toggle="modal" data-bs-target="#modal{{produto.id}}">
                             Alterar informações
                         </button>
                         
-                        <div class="modal fade" id="modal{{servico.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                        <div class="modal fade" id="modal{{produto.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
                             <div class="modal-dialog">
                             <div class="modal-content">
                                 <div class="modal-header">
@@ -54,7 +54,7 @@
                                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                 </div>
                                 <div class="modal-body">
-                                    Tem certeza que deseja alterar os dados de <strong>{{ servico.nome.upper() }}</strong>?
+                                    Tem certeza que deseja alterar os dados de <strong>{{ produto.nome.upper() }}</strong>?
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Não</button>
