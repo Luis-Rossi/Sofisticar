@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from flask import render_template, request
 
 from app import app, db, login_manager
@@ -59,7 +57,7 @@ def funcionario_editar(id):
         funcionario.funcao = request.form['funcao']
         funcionario.isActive = int(request.form['isActive'])
         db.session.commit()
-        mensagem = f"O funcionário {funcionario.nome} foi editado(a) COM SUCESSO!"
+        mensagem = f"O funcionário {funcionario.nome.upper()} foi editado(a) COM SUCESSO!"
         return render_template("funcionario_resultado.html", mensagem_editar=mensagem)
     return render_template('funcionario_editar.html', funcionario=funcionario)
 
@@ -69,7 +67,7 @@ def funcionario_deletar(id):
     funcionario = Funcionario.query.get(id)
     funcionario.isActive = 0
     db.session.commit()
-    mensagem = f"O funcionário {funcionario.nome} foi DELETADO(A)!"
+    mensagem = f"O funcionário {funcionario.nome.upper()} foi DELETADO(A)!"
     return render_template("funcionario_resultado.html", mensagem_deletar=mensagem)
 
 

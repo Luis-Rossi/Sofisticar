@@ -73,7 +73,7 @@ def usuario_editar(id):
         usuario.username = request.form['username']
         usuario.isActive = int(request.form['isActive'])
         db.session.commit()
-        mensagem = f"O usuário {usuario.username} foi editado(a) COM SUCESSO!"
+        mensagem = f"O usuário {usuario.username.upper()} foi editado(a) COM SUCESSO!"
         return render_template("usuario_resultado.html", mensagem_editar=mensagem)
     return render_template('usuario_editar.html', usuario=usuario, funcionario=funcionario)
 
@@ -85,7 +85,7 @@ def usuario_redefinir_senha(id):
     if request.method == 'POST':
         usuario.password = request.form['novo_password']
         db.session.commit()
-        mensagem = f"A senha do usuário {usuario.username} foi alterada COM SUCESSO!"
+        mensagem = f"A senha do usuário {usuario.username.upper()} foi alterada COM SUCESSO!"
         return render_template("usuario_resultado.html", mensagem_editar=mensagem)
     return render_template('usuario_redefinir_senha.html', usuario=usuario, funcionario=funcionario)
 
@@ -95,5 +95,5 @@ def usuario_deletar(id):
     usuario = Usuario.query.get(id)
     usuario.isActive = 0
     db.session.commit()
-    mensagem = f"O usuário {usuario.username} foi DELETADO(A)!"
+    mensagem = f"O usuário {usuario.username.upper()} foi DELETADO(A)!"
     return render_template("usuario_resultado.html", mensagem_deletar=mensagem)

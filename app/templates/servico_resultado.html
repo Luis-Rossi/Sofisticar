@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<main class="container">
+    <div class="py-5 text-center">
+        <h2>Consulta de Serviços</h2>
+        <p class="lead">Insira abaixo uma das informações para pesquisar o cadastro do serviço, ou deixe em branco para retornar todos os registros.</p>
+    </div>
+
+    <!-- VALIDAÇÕES --> 
+    
+    {% if mensagem_editar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-success d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_editar }}
+            <a class="col-3 btn btn-outline-success mt-3" href="/servico_resultado">Retornar para consulta de funcionários</a>
+        </div>
+    </div>
+    {% elif mensagem_deletar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-danger d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_deletar }}
+            <a class="col-3 btn btn-outline-danger mt-3" href="/servico_resultado">Retornar para consulta de funcionários</a>
+        </div>
+    </div>
+    {% else %}  <!-- CASO NÃO HAJA VALIDAÇÕES, MOSTRAR TABELA --> 
+    <div class="container">
+        <form action="" class="col-12 d-flex" method="POST">
+            <div class="col-3 p-1">
+                <select class="form-select" name="opcao">
+                    <option>-- Selecione --</option>
+                    <option>Nome</option>
+                </select>
+            </div>
+            <div class="col-9 p-1">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Insira uma informação ou deixe em branco para todos os registros" name="campo">
+                    <button type="submit" class="btn btn-secondary">Pesquisar!</button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="mb-4"> </div>
+
+        <table class="table col-12">
+            <thead class="col-12">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Preço</th>
+                <th>Descrição</th>
+            </thead>
+
+            <tbody class="col-12 table-group-divider">  <!-- RETORNA TODOS OS REGISTROS -->          
+                {% if campo == '' %}
+                    {% for servico in servicos %}
+                        {% if servico.isActive == 1 %}
+                            <tr>
+                                <td>{{ servico.id }}</td>
+                                <td>{{ servico.nome }}</td>
+                                <td>R$ {{ '%0.2f'|format(servico.valor|float) }}</td>
+                                <td>{{ servico.descricao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{servico.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{servico.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ servico.nome }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ servico.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ servico.nome }}</li>
+                                                        <li><strong>Preço:</strong> R$ {{ '%0.2f'|format(servico.valor|float) }}</li>
+                                                        <li><strong>Descrição:</strong> {{ servico.descricao }}</li>
+                                                        <li><strong>Serviço Ativo?</strong> <span class="h6" style="color:green">{{ servico.servico_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/servico_editar/{{servico.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <span class="p-2">|</span>
+                                    <a href="/servico_editar/{{servico.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{servico.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="exampleModal{{servico.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o serviço <strong>{{ servico.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/servico_deletar/{{servico.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                <!-- Preenchimento da tabela caso a pesquisa seja por nome (pode ser nome ou parte do nome) -->
+                {% elif opcao == 'Nome' %}
+                    {% for servico in servicos %}
+                        {% if campo.upper() in servico.nome.upper() %}
+                            {% if servico.isActive == 1 %}
+                            <tr>
+                                <td>{{ servico.id }}</td>
+                                <td>{{ servico.nome }}</td>
+                                <td>R$ {{ '%0.2f'|format(servico.valor|float) }}</td>
+                                <td>{{ servico.descricao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{servico.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{servico.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ servico.nome }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ servico.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ servico.nome }}</li>
+                                                        <li><strong>Preço:</strong> R$ {{ '%0.2f'|format(servico.valor|float) }}</li>
+                                                        <li><strong>Descrição:</strong> {{ servico.descricao }}</li>
+                                                        <li><strong>Serviço Ativo?</strong> <span class="h6" style="color:green">{{ servico.servico_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/servico_editar/{{servico.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <span class="p-2">|</span>
+                                    <a href="/servico_editar/{{servico.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#exampleModal{{servico.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="exampleModal{{servico.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="exampleModalLabel">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o serviço <strong>{{ servico.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/servico_deletar/{{servico.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                            {% endif %}
+                        {% endif %}                   
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div> 
+{% endif %}   
+</main>
+{% else %}
+    <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+{% endif %}
+{% endblock %}

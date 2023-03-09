@@ -1,423 +1,423 @@
 {% extends "base.html" %}
 {% block content %}
 
-    {% if current_user.is_authenticated %}
-        <main class="container">
-            <div class="py-5 text-center">
-                <h2>Consulta de Funcionários</h2>
-                <p class="lead">Insira abaixo uma das informações para pesquisar o cadastro do funcionário, ou deixe em branco para retornar todos os registros.</p>
-            </div>
+{% if current_user.is_authenticated %}
+<main class="container">
+    <div class="py-5 text-center">
+        <h2>Consulta de Funcionários</h2>
+        <p class="lead">Insira abaixo uma das informações para pesquisar o cadastro do funcionário, ou deixe em branco para retornar todos os registros.</p>
+    </div>
 
-            <!-- VALIDAÇÕES --> 
-            
-            {% if mensagem_editar %}
-            <div class="col-12 text-center">
-                <div class="alert alert-success d-flex flex-column align-items-center" role="alert">
-                    {{ mensagem_editar }}
-                    <a class="col-3 btn btn-outline-success mt-3" href="/funcionario_resultado">Retornar para consulta de funcionários</a>
+    <!-- VALIDAÇÕES --> 
+    
+    {% if mensagem_editar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-success d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_editar }}
+            <a class="col-3 btn btn-outline-success mt-3" href="/funcionario_resultado">Retornar para consulta de funcionários</a>
+        </div>
+    </div>
+    {% elif mensagem_deletar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-danger d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_deletar }}
+            <a class="col-3 btn btn-outline-danger mt-3" href="/funcionario_resultado">Retornar para consulta de funcionários</a>
+        </div>
+    </div>
+    {% else %}  <!-- CASO NÃO HAJA VALIDAÇÕES, MOSTRAR TABELA --> 
+    <div class="container">
+        <form action="" class="col-12 d-flex" method="POST">
+            <div class="col-3 p-1">
+                <select class="form-select" name="opcao">
+                    <option>-- Selecione --</option>
+                    <option>Nome</option>
+                    <option>E-mail</option>
+                    <option>Celular</option>
+                    <option>Função</option>
+                </select>
+            </div>
+            <div class="col-9 p-1">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Insira uma informação ou deixe em branco para todos os registros" name="campo">
+                    <button type="submit" class="btn btn-secondary">Pesquisar!</button>
                 </div>
             </div>
-            {% elif mensagem_deletar %}
-            <div class="col-12 text-center">
-                <div class="alert alert-danger d-flex flex-column align-items-center" role="alert">
-                    {{ mensagem_deletar }}
-                    <a class="col-3 btn btn-outline-danger mt-3" href="/funcionario_resultado">Retornar para consulta de funcionários</a>
-                </div>
-            </div>
-            {% else %}  <!-- CASO NÃO HAJA VALIDAÇÕES, MOSTRAR TABELA --> 
-            <div class="container">
-                <form action="" class="col-12 d-flex" method="POST">
-                    <div class="col-3 p-1">
-                        <select class="form-select" name="opcao">
-                            <option>-- Selecione --</option>
-                            <option>Nome</option>
-                            <option>E-mail</option>
-                            <option>Celular</option>
-                            <option>Função</option>
-                        </select>
-                    </div>
-                    <div class="col-9 p-1">
-                        <div class="input-group">
-                            <input type="text" class="form-control" placeholder="Insira uma informação ou deixe em branco para todos os registros" name="campo">
-                            <button type="submit" class="btn btn-secondary">Pesquisar!</button>
-                        </div>
-                    </div>
-                </form>
-                
-                <div class="mb-4"></div>
+        </form>
+        
+        <div class="mb-4"></div>
 
-                <table class="table col-12">
-                    <thead class="col-12">
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Celular</th>
-                        <th>Função</th>
-                        <th>Ações</th>
-                    </thead>
+        <table class="table col-12">
+            <thead class="col-12">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Celular</th>
+                <th>Função</th>
+                <th>Ações</th>
+            </thead>
 
-                    <tbody class="col-12 table-group-divider">  <!-- RETORNA TODOS OS REGISTROS -->        
-                        {% if campo == '' %}
-                            {% for funcionario in funcionarios %}
-                                {% if funcionario.isActive == 1 %}
-                                    <tr>
-                                        <td>{{ funcionario.id }}</td>
-                                        <td>{{ funcionario.nome }}</td>
-                                        <td>{{ funcionario.email }}</td>
-                                        <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
-                                        <td>{{ funcionario.funcao }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
-                                                Info
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome }}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <ul>
-                                                                <li><strong>ID:</strong> {{ funcionario.id }}</li>
-                                                                <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
-                                                                <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
-                                                                <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
-                                                                <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
-                                                                <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
-                                                                <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
-                                                                <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.esta_ativo() }}</span></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
+            <tbody class="col-12 table-group-divider">  <!-- RETORNA TODOS OS REGISTROS -->        
+                {% if campo == '' %}
+                    {% for funcionario in funcionarios %}
+                        {% if funcionario.isActive == 1 %}
+                            <tr>
+                                <td>{{ funcionario.id }}</td>
+                                <td>{{ funcionario.nome }}</td>
+                                <td>{{ funcionario.email }}</td>
+                                <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
+                                <td>{{ funcionario.funcao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome.upper() }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ funcionario.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
+                                                        <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
+                                                        <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
+                                                        <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
+                                                        <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
+                                                        <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.func_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
                                                 </div>
                                             </div>
-                                            
-                                            <span class="p-2">|</span>
-                                            <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
-                                            <span class="p-2">|</span>
-                                            
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
-                                                Excluir
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome }}</strong>?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
-                                                        </div>
-                                                    </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
                                                 </div>
                                             </div>
-                                        </td>                       
-                                    </tr>
-                                {% endif %}
-                            {% endfor %}
-
-                        {% elif opcao == 'Nome' %}  <!-- RETORNA REGISTROS POR NOME --> 
-                            {% for funcionario in funcionarios %}
-                                {% if campo.upper() in funcionario.nome.upper() and funcionario.isActive == 1 %}
-                                    <tr>
-                                        <td>{{ funcionario.id }}</td>
-                                        <td>{{ funcionario.nome }}</td>
-                                        <td>{{ funcionario.email }}</td>
-                                        <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
-                                        <td>{{ funcionario.funcao }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
-                                                Info
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome }}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <ul>
-                                                                <li><strong>ID:</strong> {{ funcionario.id }}</li>
-                                                                <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
-                                                                <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
-                                                                <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
-                                                                <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
-                                                                <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
-                                                                <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
-                                                                <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.esta_ativo() }}</span></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <span class="p-2">|</span>
-                                            <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
-                                            <span class="p-2">|</span>
-                                            
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
-                                                Excluir
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome }}</strong>?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>                       
-                                    </tr>
-                                {% endif %}                   
-                            {% endfor %}
-
-                        {% elif opcao == 'E-mail' %}    <!-- RETORNA REGISTROS POR E-MAIL --> 
-                            {% for funcionario in funcionarios %}
-                                {% if campo.upper() in funcionario.email.upper() and funcionario.isActive == 1 %}
-                                    <tr>
-                                        <td>{{ funcionario.id }}</td>
-                                        <td>{{ funcionario.nome }}</td>
-                                        <td>{{ funcionario.email }}</td>
-                                        <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
-                                        <td>{{ funcionario.funcao }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
-                                                Info
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome }}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <ul>
-                                                                <li><strong>ID:</strong> {{ funcionario.id }}</li>
-                                                                <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
-                                                                <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
-                                                                <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
-                                                                <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
-                                                                <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
-                                                                <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
-                                                                <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.esta_ativo() }}</span></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <span class="p-2">|</span>
-                                            <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
-                                            <span class="p-2">|</span>
-                                            
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
-                                                Excluir
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome }}</strong>?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>                       
-                                    </tr>
-                                {% endif %}                    
-                            {% endfor %}
-
-                        {% elif opcao == 'Celular' %}   <!-- RETORNA REGISTROS POR CELULAR --> 
-                            {% for funcionario in funcionarios %}
-                                {% if campo in funcionario.celular and funcionario.isActive == 1 %}
-                                    <tr>
-                                        <td>{{ funcionario.id }}</td>
-                                        <td>{{ funcionario.nome }}</td>
-                                        <td>{{ funcionario.email }}</td>
-                                        <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
-                                        <td>{{ funcionario.funcao }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
-                                                Info
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome }}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <ul>
-                                                                <li><strong>ID:</strong> {{ funcionario.id }}</li>
-                                                                <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
-                                                                <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
-                                                                <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
-                                                                <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
-                                                                <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
-                                                                <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
-                                                                <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.esta_ativo() }}</span></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <span class="p-2">|</span>
-                                            <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
-                                            <span class="p-2">|</span>
-                                            
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
-                                                Excluir
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome }}</strong>?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>                       
-                                    </tr>
-                                {% endif %}                   
-                            {% endfor %}
-
-                        {% elif opcao == 'Função' %}    <!-- RETORNA REGISTROS POR FUNÇÃO --> 
-                            {% for funcionario in funcionarios %}
-                                {% if campo.upper() in funcionario.funcao.upper() and funcionario.isActive == 1 %}
-                                    <tr>
-                                        <td>{{ funcionario.id }}</td>
-                                        <td>{{ funcionario.nome }}</td>
-                                        <td>{{ funcionario.email }}</td>
-                                        <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
-                                        <td>{{ funcionario.funcao }}</td>
-                                        <td>
-                                            <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
-                                                Info
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome }}</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <ul>
-                                                                <li><strong>ID:</strong> {{ funcionario.id }}</li>
-                                                                <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
-                                                                <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
-                                                                <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
-                                                                <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
-                                                                <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
-                                                                <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
-                                                                <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.esta_ativo() }}</span></li>
-                                                            </ul>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            
-                                            <span class="p-2">|</span>
-                                            <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
-                                            <span class="p-2">|</span>
-                                            
-                                            <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
-                                                Excluir
-                                            </button>
-                                            
-                                            <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
-                                                <div class="modal-dialog">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
-                                                        <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
-                                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome }}</strong>?
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                        <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
-                                                        <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>                       
-                                    </tr>
-                                {% endif %}                   
-                            {% endfor %}
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
                         {% endif %}
-                    </tbody>
-                </table>
-            </div>  
-            {% endif %}  
-        </main>
-    {% else %}
-        <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
-    {% endif %}
+                    {% endfor %}
+
+                {% elif opcao == 'Nome' %}  <!-- RETORNA REGISTROS POR NOME --> 
+                    {% for funcionario in funcionarios %}
+                        {% if campo.upper() in funcionario.nome.upper() and funcionario.isActive == 1 %}
+                            <tr>
+                                <td>{{ funcionario.id }}</td>
+                                <td>{{ funcionario.nome }}</td>
+                                <td>{{ funcionario.email }}</td>
+                                <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
+                                <td>{{ funcionario.funcao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome.upper() }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ funcionario.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
+                                                        <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
+                                                        <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
+                                                        <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
+                                                        <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
+                                                        <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.func_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}                   
+                    {% endfor %}
+
+                {% elif opcao == 'E-mail' %}    <!-- RETORNA REGISTROS POR E-MAIL --> 
+                    {% for funcionario in funcionarios %}
+                        {% if campo.upper() in funcionario.email.upper() and funcionario.isActive == 1 %}
+                            <tr>
+                                <td>{{ funcionario.id }}</td>
+                                <td>{{ funcionario.nome }}</td>
+                                <td>{{ funcionario.email }}</td>
+                                <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
+                                <td>{{ funcionario.funcao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome.upper() }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ funcionario.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
+                                                        <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
+                                                        <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
+                                                        <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
+                                                        <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
+                                                        <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.func_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}                    
+                    {% endfor %}
+
+                {% elif opcao == 'Celular' %}   <!-- RETORNA REGISTROS POR CELULAR --> 
+                    {% for funcionario in funcionarios %}
+                        {% if campo in funcionario.celular and funcionario.isActive == 1 %}
+                            <tr>
+                                <td>{{ funcionario.id }}</td>
+                                <td>{{ funcionario.nome }}</td>
+                                <td>{{ funcionario.email }}</td>
+                                <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
+                                <td>{{ funcionario.funcao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome.upper() }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ funcionario.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
+                                                        <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
+                                                        <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
+                                                        <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
+                                                        <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
+                                                        <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.func_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}                   
+                    {% endfor %}
+
+                {% elif opcao == 'Função' %}    <!-- RETORNA REGISTROS POR FUNÇÃO --> 
+                    {% for funcionario in funcionarios %}
+                        {% if campo.upper() in funcionario.funcao.upper() and funcionario.isActive == 1 %}
+                            <tr>
+                                <td>{{ funcionario.id }}</td>
+                                <td>{{ funcionario.nome }}</td>
+                                <td>{{ funcionario.email }}</td>
+                                <td>({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</td>
+                                <td>{{ funcionario.funcao }}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{funcionario.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de {{ funcionario.nome.upper() }}</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ funcionario.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ funcionario.nome }}</li>
+                                                        <li><strong>E-mail:</strong> {{ funcionario.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{funcionario.celular[0:2]}}){{funcionario.celular[2]}}.{{funcionario.celular[3:7]}}-{{funcionario.celular[7:12]}}</li>
+                                                        <li><strong>Data Nascimento:</strong> {{ funcionario.formata_data_nascimento().day }}/{{ funcionario.formata_data_nascimento().month }}/{{ funcionario.formata_data_nascimento().year }}</li>
+                                                        <li><strong>Data Contrato:</strong> {{ funcionario.formata_data_contrato().day }}/{{ funcionario.formata_data_contrato().month }}/{{ funcionario.formata_data_contrato().year }}</li>
+                                                        <li><strong>Função:</strong> {{ funcionario.funcao }}</li>
+                                                        <li><strong>Funcionário Ativo?</strong> <span class="h6" style="color:green">{{ funcionario.func_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/funcionario_editar/{{funcionario.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{funcionario.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{funcionario.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o funcionário <strong>{{ funcionario.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/funcionario_deletar/{{funcionario.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}                   
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>  
+{% endif %}  
+</main>
+{% else %}
+    <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+{% endif %}
 {% endblock %}
