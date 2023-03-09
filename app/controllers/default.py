@@ -1,12 +1,12 @@
-from hashlib import blake2b
+# from hashlib import blake2b
 
-from flask import flash, redirect, render_template, request, url_for
+from flask import flash, redirect, render_template, url_for
 from flask_login import login_user, logout_user
 
-from app import app, db, login_manager
-from app.controllers.index import index
+import app.controllers.index
+from app import app, login_manager
 from app.models.forms import LoginForm
-from app.models.tables import Funcionario, Usuario
+from app.models.tables import Usuario
 
 
 @login_manager.user_loader
