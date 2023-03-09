@@ -46,8 +46,8 @@ def servico_editar(id):
         servico.valor = request.form['valor']
         servico.isActive = int(request.form['isActive'])
         db.session.commit()
-        mensagem = f"Serviço {servico.nome.upper()} foi editado(a) COM SUCESSO!"
-        return render_template("servico_resultado.html", mensagem_editar=mensagem)
+        mensagem_editar = f"Serviço {servico.nome.upper()} foi editado(a) COM SUCESSO!"
+        return render_template("servico_resultado.html", mensagem_editar=mensagem_editar)
     return render_template('servico_editar.html', servico=servico)
 
 
@@ -56,8 +56,8 @@ def servico_deletar(id):
     servico = Servico.query.get(id)
     servico.isActive = 0
     db.session.commit()
-    mensagem = f"O serviço {servico.nome.upper()} foi DELETADO(A)!"
-    return render_template("servico_resultado.html", mensagem_deletar=mensagem)
+    mensagem_deletar = f"O serviço {servico.nome.upper()} foi DELETADO(A)!"
+    return render_template("servico_resultado.html", mensagem_deletar=mensagem_deletar)
 
 
 '''

@@ -2,6 +2,7 @@ from datetime import date
 
 from flask import render_template
 
+import app.controllers.clientes
 import app.controllers.funcionarios
 import app.controllers.produtos
 import app.controllers.servicos

@@ -46,8 +46,8 @@ def produto_editar(id):
         produto.valor = request.form['valor']
         produto.isActive = int(request.form['isActive'])
         db.session.commit()
-        mensagem = f"Produto {produto.nome.upper()} foi editado(a) COM SUCESSO!"
-        return render_template("produto_resultado.html", mensagem_editar=mensagem)
+        mensagem_editar = f"Produto {produto.nome.upper()} foi editado(a) COM SUCESSO!"
+        return render_template("produto_resultado.html", mensagem_editar=mensagem_editar)
     return render_template('produto_editar.html', produto=produto)
 
 
@@ -56,8 +56,8 @@ def produto_deletar(id):
     produto = Produto.query.get(id)
     produto.isActive = 0
     db.session.commit()
-    mensagem = f"O produto {produto.nome.upper()} foi DELETADO(A)!"
-    return render_template("produto_resultado.html", mensagem_deletar=mensagem)
+    mensagem_deletar = f"O produto {produto.nome.upper()} foi DELETADO(A)!"
+    return render_template("produto_resultado.html", mensagem_deletar=mensagem_deletar)
 
 
 '''
