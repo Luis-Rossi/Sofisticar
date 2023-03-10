@@ -17,10 +17,10 @@ from app import db
 
 class Usuario(db.Model):
     __tablename__ = "usuarios"
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String, unique=True)
-    password = db.Column(db.String)
-    email = db.Column(db.String, unique=True)
+    password = db.Column(db.String, nullable=False)
+    email = db.Column(db.String, nullable=False)
     funcionario_id = db.Column(db.Integer, db.ForeignKey('funcionarios.id'))
     isActive = db.Column(db.Boolean, default=1, nullable=False)
 
@@ -75,7 +75,7 @@ class Funcionario(db.Model):
     funcao = db.Column(db.String(150), nullable=False)
     isActive = db.Column(db.Boolean, default=1, nullable=False)
     ordemServico = relationship('OrdemServico', back_populates="funcionario")
-    usuario = relationship(Usuario, backref="funcionarios")
+    usuario = relationship('Usuario', backref="funcionarios")
 
     def __init__(self, nome, email, celular, dataNascimento, dataContrato, funcao):
         self.nome = nome
@@ -109,13 +109,13 @@ class Funcionario(db.Model):
 
 class Cliente(db.Model):
     __tablename__ = 'clientes'
-    id = db.Column(db.Integer, autoincrement=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(150), nullable=False)
     email = db.Column(db.String(150), nullable=False)
-    cpf = db.Column(db.String(150), primary_key=True)
+    cpf = db.Column(db.String(150), nullable=False)
     celular = db.Column(db.String(150), nullable=False)
-    veiculo = relationship('Veiculo', back_populates='cliente')
     isActive = db.Column(db.Boolean, default=1, nullable=False)
+    veiculo = relationship('Veiculo', back_populates='cliente')
 
     def __init__(self, nome, email, cpf, celular):
         self.nome = nome
@@ -143,7 +143,7 @@ class Veiculo(db.Model):
     cor = db.Column(db.String(150), nullable=False)
     placa = db.Column(db.String(150), nullable=False)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'))
-    cliente = relationship(Cliente, back_populates='veiculo')
+    cliente = relationship('Cliente', back_populates='veiculo')
     isActive = db.Column(db.Boolean, default=1, nullable=False)
     orcamentos = relationship('Orcamento', back_populates="veiculo")
     agendamento = relationship('Agendamento', back_populates='veiculo')
@@ -225,11 +225,11 @@ class Orcamento(db.Model):
     data = db.Column(db.DateTime, default=datetime.now)
     status = db.Column(db.JSON, nullable=False)
     veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'))
-    veiculo = relationship(Veiculo, back_populates="orcamentos")
+    veiculo = relationship('Veiculo', back_populates="orcamentos")
     servico_id = db.Column(db.JSON, db.ForeignKey('servicos.id'))
-    servico = relationship(Servico, back_populates="orcamentos")
+    servico = relationship('Servico', back_populates="orcamentos")
     produto_id = db.Column(db.JSON, db.ForeignKey('produtos.id'))
-    produto = relationship(Produto, back_populates="orcamentos")
+    produto = relationship('Produto', back_populates="orcamentos")
     agendamento = relationship('Agendamento', back_populates="orcamento")
     ordemServico = relationship('OrdemServico', back_populates="orcamento")
 
@@ -277,9 +277,9 @@ class Agendamento(db.Model):
     data_agendamento = db.Column(db.DateTime, default=None)
     status = db.Column(db.JSON, nullable=False)
     veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'))
-    veiculo = relationship(Veiculo, back_populates="agendamento")
+    veiculo = relationship('Veiculo', back_populates="agendamento")
     orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
-    orcamento = relationship(Orcamento, back_populates="agendamento")
+    orcamento = relationship('Orcamento', back_populates="agendamento")
 
     def __init__(self, data_agendamento, veiculo_id, orcamento_id, status):
         self.data_agendamento = data_agendamento
@@ -312,9 +312,9 @@ class OrdemServico(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     status = db.Column(db.JSON, nullable=False)
     orcamento_id = db.Column(db.Integer, db.ForeignKey('orcamento.id'))
-    orcamento = relationship(Orcamento, back_populates="ordemServico")
+    orcamento = relationship('Orcamento', back_populates="ordemServico")
     funcionario_id = db.Column(db.Integer, db.ForeignKey('funcionarios.id'))
-    funcionario = relationship(Funcionario, back_populates="ordemServico")
+    funcionario = relationship('Funcionario', back_populates="ordemServico")
     descricao = db.Column(db.String(250), default=None)
 
     def __init__(self, status, orcamento_id, funcionario_id, descricao):

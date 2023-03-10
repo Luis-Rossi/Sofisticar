@@ -1,0 +1,488 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<main class="container">
+    <div class="py-5 text-center">
+        <h2>Consulta de Clientes</h2>
+        <p class="lead">Insira abaixo uma das informações para pesquisar o cadastro do cliente, ou deixe em branco para retornar todos os registros.</p>
+    </div>
+
+    <!-- VALIDAÇÕES --> 
+    
+    {% if mensagem_editar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-success d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_editar }}
+            <a class="col-3 btn btn-outline-success mt-3" href="/cliente_resultado">Retornar para consulta de clientes</a>
+        </div>
+    </div>
+    {% elif mensagem_deletar %}
+    <div class="col-12 text-center">
+        <div class="alert alert-danger d-flex flex-column align-items-center" role="alert">
+            {{ mensagem_deletar }}
+            <a class="col-3 btn btn-outline-danger mt-3" href="/cliente_resultado">Retornar para consulta de clientes</a>
+        </div>
+    </div>
+    {% else %}  <!-- CASO NÃO HAJA VALIDAÇÕES, MOSTRAR TABELA --> 
+    <div class="container">
+        <form action="" class="col-12 d-flex" method="POST">
+            <div class="col-3 p-1">
+                <select class="form-select" name="opcao">
+                    <option>-- Selecione --</option>
+                    <option>Nome</option>
+                    <option>CPF</option>
+                    <option>E-mail</option>
+                    <option>Celular</option>
+                    <option>------------------</option>
+                    <option>Placa</option>
+                </select>
+            </div>
+            <div class="col-9 p-1">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Insira uma informação ou deixe em branco para todos os registros" name="campo">
+                    <button type="submit" class="btn btn-secondary">Pesquisar!</button>
+                </div>
+            </div>
+        </form>
+        
+        <div class="mb-4"> </div> <!-- Espaçamento -->
+        <!-- Títulos da tabela -->
+        <table class="table col-12">
+            <thead class="col-12">
+                <th>ID</th>
+                <th>Nome</th>
+                <th>CPF</th>
+                <th>E-mail</th>
+                <th>Celular</th>
+                <th>Ações</th>
+            </thead>
+
+            <tbody class="col-12 table-group-divider">  <!-- RETORNA TODOS OS REGISTROS -->
+                {% if campo == '' %}
+                    {% for cliente in clientes %}
+                        {% if cliente.isActive == 1 %}
+                            <tr>
+                                <td>{{ cliente.id }}</td>
+                                <td>{{ cliente.nome }}</td>
+                                <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                                <td>{{ cliente.email }}</td>
+                                <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                                <td>
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                        Info
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <ul>
+                                                        <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                        <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                        <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                        <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                        <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                        <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                    </ul>
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <span class="p-2">|</span>
+                                    <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                                </div>
+                                                <div class="modal-footer">
+                                                <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>                       
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+
+                {% elif opcao == 'Nome' %}
+                    {% for cliente in clientes %}
+                        {% if campo.upper() in cliente.nome.upper() and cliente.isActive == 1 %}
+                        <tr>
+                            <td>{{ cliente.id }}</td>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                            <td>{{ cliente.email }}</td>
+                            <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                    Info
+                                </button>
+                                
+                                <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul>
+                                                    <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                    <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                    <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                    <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                    <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                    <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <span class="p-2">|</span>
+                                <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                <span class="p-2">|</span>
+                                
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                    Excluir
+                                </button>
+                                
+                                <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>                       
+                        </tr>
+                        {% endif %}                   
+                    {% endfor %}
+
+                {% elif opcao == 'E-mail' %}
+                    {% for cliente in clientes %}
+                        {% if campo.upper() in cliente.email.upper() and cliente.isActive == 1 %}
+                        <tr>
+                            <td>{{ cliente.id }}</td>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                            <td>{{ cliente.email }}</td>
+                            <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                    Info
+                                </button>
+                                
+                                <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul>
+                                                    <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                    <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                    <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                    <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                    <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                    <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <span class="p-2">|</span>
+                                <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                <span class="p-2">|</span>
+                                
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                    Excluir
+                                </button>
+                                
+                                <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>                       
+                        </tr>
+                        {% endif %}                    
+                    {% endfor %}
+
+                {% elif opcao == 'CPF' %}
+                    {% for cliente in clientes %}
+                        {% if campo in cliente.cpf and cliente.isActive == 1 %}
+                        <tr>
+                            <td>{{ cliente.id }}</td>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                            <td>{{ cliente.email }}</td>
+                            <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                    Info
+                                </button>
+                                
+                                <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul>
+                                                    <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                    <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                    <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                    <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                    <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                    <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <span class="p-2">|</span>
+                                <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                <span class="p-2">|</span>
+                                
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                    Excluir
+                                </button>
+                                
+                                <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>                       
+                        </tr>
+                        {% endif %}                   
+                    {% endfor %}
+
+                {% elif opcao == 'Celular'%}
+                    {% for cliente in clientes %}
+                        {% if campo in cliente.celular and cliente.isActive == 1 %}
+                        <tr>
+                            <td>{{ cliente.id }}</td>
+                            <td>{{ cliente.nome }}</td>
+                            <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                            <td>{{ cliente.email }}</td>
+                            <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                            <td>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                    Info
+                                </button>
+                                
+                                <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <ul>
+                                                    <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                    <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                    <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                    <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                    <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                    <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                </ul>
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <span class="p-2">|</span>
+                                <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                <span class="p-2">|</span>
+                                
+                                <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                    Excluir
+                                </button>
+                                
+                                <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                            </div>
+                                            <div class="modal-footer">
+                                            <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                            <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>                       
+                        </tr>
+                        {% endif %}                   
+                    {% endfor %}
+
+                {% elif opcao == 'Placa'%}
+                    {% for veiculo in veiculos %}
+                        {% if campo.upper() in veiculo.placa.upper() and veiculo.isActive == 1 %}
+                            {% for cliente in clientes %}
+                                {% if cliente.id == veiculo.cliente_id and cliente.isActive == 1 %}
+                                <tr>
+                                    <td>{{ cliente.id }}</td>
+                                    <td>{{ cliente.nome }}</td>
+                                    <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                                    <td>{{ cliente.email }}</td>
+                                    <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#modalinfo{{cliente.id}}">
+                                            Info
+                                        </button>
+                                        
+                                        <div class="modal fade" id="modalinfo{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="modal">Informações de <strong>{{ cliente.nome.upper() }}</strong> </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <ul>
+                                                            <li><strong>ID:</strong> {{ cliente.id }}</li>
+                                                            <li><strong>Nome:</strong> {{ cliente.nome }}</li>
+                                                            <li><strong>CPF:</strong> {{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</li>
+                                                            <li><strong>E-mail:</strong> {{ cliente.email }}</li>
+                                                            <li><strong>Celular:</strong> ({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</li>
+                                                            <li><strong>Cliente Ativo?</strong> <span class="h6" style="color:green">{{ cliente.cliente_esta_ativo() }}</span></li>
+                                                        </ul>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-secondary">Editar Informações</button></a>
+                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Fechar</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        
+                                        <span class="p-2">|</span>
+                                        <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                        <span class="p-2">|</span>
+                                        
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{cliente.id}}">
+                                            Excluir
+                                        </button>
+                                        
+                                        <div class="modal fade" id="modal{{cliente.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        Tem certeza que deseja excluir o cliente <strong>{{ cliente.nome.upper() }}</strong>?
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                    <a href="/cliente_deletar/{{cliente.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>                       
+                                </tr>
+                                {% endif %} 
+                            {% endfor %}
+                        {% endif %}                   
+                    {% endfor %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+{% endif %}  
+</main>
+{% else %}
+    <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+{% endif %}
+{% endblock %}

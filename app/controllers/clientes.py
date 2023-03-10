@@ -23,13 +23,13 @@ def cliente_cadastrar():
                 mensagem_erro = f'Número de celular já cadastrado(a) no sistema!'
                 return render_template('cliente_cadastrar.html', mensagem_erro=mensagem_erro)
             elif request.form['cpf'] == cli.cpf and cli.isActive == 1:
-                mensagem_erro = f'CPF nº {cli.cpf} de celular já cadastrado(a) no sistema!'
+                mensagem_erro = f'CPF nº {cli.cpf} já cadastrado(a) no sistema!'
                 return render_template('cliente_cadastrar.html', mensagem_erro=mensagem_erro)
 
         for veic in todos_veiculos:
             if request.form['placa'] == veic.placa and veic.isActive == 1:
                 mensagem_erro = f'Veículo de placa {veic.placa.upper()} já cadastrado(a) no sistema!'
-                return render_template('cadastrar_clientes.html', mensagem_erro=mensagem_erro)
+                return render_template('cliente_cadastrar.html', mensagem_erro=mensagem_erro)
 
         cliente = Cliente(request.form['nome'], request.form['email'],
                           request.form['cpf'], request.form['celular'])
