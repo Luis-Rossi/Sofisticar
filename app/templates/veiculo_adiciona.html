@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+{% block content %}
+
+{% if current_user.is_authenticated %}
+<main class="container">
+
+    <div class="py-5 text-center">
+        <h2>Cadastro de Veículo</h2>
+        <p class="lead">Verfique abaixo as informações de <strong>{{ cliente.nome.upper() }}</strong> antes de adicionar um novo veículo.</p>
+    </div>
+
+    <div class="row g-5">
+        <div class="col-sm-12 col-lg-7">
+            <table class="table" action="/cliente_info/{{ cliente.id }}" method="POST">
+                <h4 class="mb-3">Dados Pessoais</h4>
+                <thead class="col-12">
+                    <th>ID</th>
+                    <th>Nome</th>
+                    <th>CPF</th>
+                    <th>E-mail</th>
+                    <th>Celular</th>
+                    <th>Ações</th>
+                </thead>
+
+                <tbody class="col-12">
+                    <tr>
+                        <td>{{ cliente.id }}</td>
+                        <td>{{ cliente.nome }}</td>
+                        <td>{{cliente.cpf[0:3]}}.{{cliente.cpf[4:7]}}.{{cliente.cpf[7:10]}}-{{cliente.cpf[10:12]}}</td>
+                        <td>{{ cliente.email }}</td>
+                        <td>({{cliente.celular[0:2]}}){{cliente.celular[2]}}.{{cliente.celular[3:7]}}-{{cliente.celular[7:12]}}</td>
+                        <td>
+                            <a href="/cliente_editar/{{cliente.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table> 
+
+            <div class="mb-5"> </div>
+
+            <table class="table">
+                <h4 class="mb-3">Dados dos Veículos do Cliente</h4>
+                <thead class="col-12">
+                    <th>ID</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>Cor</th>
+                    <th>Placa</th>
+                    <th>Ações</th>
+                </thead>
+
+                <tbody class="col-12">
+                    {% for veiculo in veiculos %}
+                        {% if cliente.id == veiculo.cliente_id %}
+                            <tr>
+                                <td>{{ veiculo.id }}</td>
+                                <td>{{ veiculo.marca }}</td>
+                                <td>{{ veiculo.modelo }}</td>
+                                <td>{{ veiculo.cor }}</td>
+                                <td>{{ veiculo.placa }}</td>
+                                <td>
+                                    <a href="/veiculo_editar/{{veiculo.id}}"><button type="button" class="btn btn-outline-primary">Editar</button></a>
+                                    <span class="p-2">|</span>
+                                    
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal{{veiculo.id}}">
+                                        Excluir
+                                    </button>
+                                    
+                                    <div class="modal fade" id="modal{{veiculo.id}}" tabindex="-1" aria-labelledby="modal" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5" id="modal">Deseja excluir?</h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Tem certeza que deseja excluir o veículo de placa <strong>{{ veiculo.placa.upper() }}</strong>?                                        </div>
+                                                <div class="modal-footer">
+                                                    <a href="/veiculo_deletar/{{veiculo.id}}"><button type="button" class="btn btn-danger">Sim</button></a>
+                                                    <button type="button" class="btn btn-success" data-bs-dismiss="modal">Não</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="col-md-12 col-lg-12">
+                <a class="w-100 btn btn-outline-primary btn-lg" href="/veiculo_adiciona/{{cliente.id}}">Atualizar Lista</a>
+            </div>
+        </div>
+
+        <div class="col-1"></div>
+
+        <form class="col-sm-12 col-lg-4 border border-1 rounded-3 pt-3" action="/veiculo_adiciona/{{ cliente.id }}" method="POST">
+            
+            <h4 class="mb-3">Cadastro do Veículo</h4>
+            <div class="col-12 pt-3 form-floating">
+                <input type="text" class="form-control" id="marca" name="marca" placeholder="Marca" required>
+                <label for="marca" class="form-label">Marca<span style="color:red">&nbsp;*</span></label>
+            </div>
+
+            <div class="col-12 pt-3 form-floating">
+                <input type="text" class="form-control" id="modelo" name="modelo" placeholder="Modelo" required>
+                <label for="modelo" class="form-label">Modelo<span style="color:red">&nbsp;*</span></label>
+            </div>
+
+            <div class="col-12 pt-3 form-floating">
+                <input type="text" class="form-control" id="cor" name="cor" placeholder="Cor Predominante" required>
+                <label for="cor" class="form-label">Cor Predominante<span style="color:red">&nbsp;*</span></label>
+            </div>
+
+            <div class="col-12 pt-3 pb-3 form-floating">
+                <input type="text" class="form-control" id="placa" name="placa" placeholder="Placa" required>
+                <label for="placa" class="form-label">Placa<span style="color:red">&nbsp;*</span></label>
+            </div>
+
+            <!-- Mensagens de validação -->
+            <div class="col-12 text-center">
+                {% with mensagens =  get_flashed_messages(with_categories=true)%}
+                    {%for categoria, mensagem in mensagens %}
+                        {%if categoria == 'error'%}
+                            <div class="alert alert-danger" role="alert">
+                                {{ mensagem }}
+                            </div>
+                        {%endif%}
+                        {%if categoria == 'info'%}
+                            <div class="alert alert-success" role="alert">
+                                {{ mensagem }}
+                            </div>
+                        {%endif%}
+                    {%endfor%}
+                {%endwith%}
+            </div>
+
+            <div class="row g-3 p-2">
+                <div class="col-md-12 col-lg-6 p-2">
+                    <button class="w-100 btn btn-success btn-lg" type="submit">Cadastrar</button>
+                </div>
+                <div class="col-md-12 col-lg-6 p-2">
+                    <a class="w-100 btn btn-outline-secondary btn-lg" href="javascript:history.back()">Voltar</a>
+                </div>
+            </div>    
+        </form>       
+    </div>
+</main>
+{% else %}
+    <meta http-equiv="refresh" content="0.1; url='http://localhost:5000/login'" />
+{% endif %}
+{% endblock %}

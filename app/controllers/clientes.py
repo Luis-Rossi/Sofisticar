@@ -20,7 +20,7 @@ def cliente_cadastrar():
                 mensagem_erro = f'E-mail {cli.email.upper()} já cadastrado(a) no sistema!'
                 return render_template('cliente_cadastrar.html', mensagem_erro=mensagem_erro)
             elif request.form['celular'] == cli.celular and cli.isActive == 1:
-                mensagem_erro = f'Número de celular já cadastrado(a) no sistema!'
+                mensagem_erro = 'Número de celular já cadastrado(a) no sistema!'
                 return render_template('cliente_cadastrar.html', mensagem_erro=mensagem_erro)
             elif request.form['cpf'] == cli.cpf and cli.isActive == 1:
                 mensagem_erro = f'CPF nº {cli.cpf} já cadastrado(a) no sistema!'
@@ -64,10 +64,18 @@ def cliente_editar(id):
         cliente.email = request.form['email']
         cliente.cpf = request.form['cpf']
         cliente.celular = request.form['celular']
+        cliente.isActive = int(request.form['isActive'])
         db.session.commit()
         mensagem_editar = f"Cliente {cliente.nome.upper()} foi editado(a) COM SUCESSO!"
         return render_template("cliente_resultado.html", mensagem_editar=mensagem_editar, veiculos=veiculos)
     return render_template("cliente_editar.html", cliente=cliente, veiculos=veiculos)
+
+
+@app.route('/cliente_info/<int:id>')
+def cliente_info(id):
+    cliente = Cliente.query.get(id)
+    veiculos = Veiculo.query.all()
+    return render_template('cliente_info.html', cliente=cliente, veiculos=veiculos)
 
 
 @app.route('/cliente_deletar/<int:id>')

@@ -7,6 +7,7 @@ import app.controllers.funcionarios
 import app.controllers.produtos
 import app.controllers.servicos
 import app.controllers.usuarios
+import app.controllers.veiculos
 from app import app
 
 
